@@ -11,12 +11,11 @@ Created on Mon Oct 23 16:10:45 2017
 import os, yaml, time
 from selenium import webdriver
 from urllib.parse import urlparse
-from PIL import Image
 import util
-import imutils
+import pandas as pd
 
 def readConfig(confg):
-    global BaseFolder, InputFile,SnapFolder,login_form,credentials
+    global BaseFolder, InputFile,SnapFolder,login_form,credentials,df
     global form_login,form_pass,form_submit
     with open(confg,'r') as ymlfile:
         cfg = yaml.load(ymlfile)
@@ -29,7 +28,8 @@ def readConfig(confg):
         credentials = cfg["Login"]["Credentials"]        
         form_login = cfg["Login"]["form_user_name"]
         form_pass = cfg["Login"]["form_user_pass"]
-        form_submit = cfg["Login"]["form_user_submit"]        
+        form_submit = cfg["Login"]["form_user_submit"]     
+    df = pd.read_csv(InputFile)
     print("Config completed")
     create_basefolder(BaseFolder,SnapFolder,InputFile)
 
@@ -53,19 +53,19 @@ def takeSnap():
     remdr.find_element_by_xpath(form_submit).click()
     remdr.implicitly_wait(200)  
     time.sleep(2)
-    with open(InputFile) as csvfile:
-        for url in csvfile:
-            remdr.get(url.strip())
-            print("Snapping {}".format(url))
-            time.sleep(3)
-            key = remdr.title
-            key=key.replace(" ","").strip()
-            key=key.replace("|","_")
-            if len(key)>240:
-                key = key[0:239]
-            remdr.implicitly_wait(5000)
-            print(key)
-            util.fullpage_screenshot(remdr,SnapFolder,key)
+    for url in df["URLs"]:
+        remdr.get(url.strip())
+        print("Snapping {}".format(url))
+        time.sleep(3)
+        parsed_url = urlparse(url)
+        key = parsed_url[2].replace('/','_')
+        if len(key)>240:
+            key = key[0:239]
+        remdr.implicitly_wait(5000)
+        print("Filename {}".format(key))
+        util.fullpage_screenshot(remdr,SnapFolder,key)      
+
+
 
 def main():
     readConfig("config.yml")

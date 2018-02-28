@@ -1,0 +1,23 @@
+Path:
+ BaseFolder: "D:/PDF/HCP-Salute"
+ InputFile: "D:/PDF/HCP-Salute/live/inputs.csv" #input URLS to generate the PDF
+ SnapFolder: "D:/PDF/HCP-Salute/live/Images/" # output folder where we have the PDFs
+
+BrowsName: Chrome
+
+Login:
+ LoginPath: "https://domaain.com/login/login-link.html"
+ Credentials: ""
+ selector: "by ID"
+ #enable for 4.1 site
+ #form_user_name: "gigya-loginID-84552255963300880"
+ #form_user_pass: "gigya-password-103283646301936140" 
+ #form_user_submit: "//*[@id='gigya-reset-password-form']/div[4]/div[2]/input"
+ #enable for 3.4 site
+ form_user_name: "j_username"
+ form_user_pass: "j_password"
+ form_user_submit: "//*[@id='content']/div/div/div/div[3]/div[2]/div/div/div/div/div/div[3]/div/form/div[5]/div/button"
+
+conditions:
+ URL:
+ con:
